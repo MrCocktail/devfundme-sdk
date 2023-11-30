@@ -1,0 +1,25 @@
+{
+  "name": "fundmefy",
+  "version": "1.0.0",
+  "description": "A Node.js SDK enabling developers to easily integrate automatic payment functionalities using DevFundMe's API.",
+  "main": "devfundme-sdk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node devfundme-sdk.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrCocktail/devfundme-sdk.git"
+  },
+  "author": "Jean David Bruno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrCocktail/devfundme-sdk/issues"
+  },
+  "homepage": "https://github.com/MrCocktail/devfundme-sdk#readme",
+  "dependencies": {
+    "exchange-rates-api": "^1.1.0",
+    "money": "^0.2.0",
+    "request": "^2.88.2"
+  }
+}

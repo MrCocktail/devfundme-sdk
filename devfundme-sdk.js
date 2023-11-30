@@ -1,30 +1,60 @@
+const {AmountOutpassedError} = require('./error-handling')
+const checkAmountType = require('./utils/checkAmountType')
+const { validateAmount } = require('./validation')
+const { convert} = require('./utils/convert')
+
 class dfmfy {
     constructor(accessToken) {
         this.accessToken = accessToken
         this.baseUrl = 'https://devfundme.com/api/pms'
     }
 
-    async generate(amount, redirectUrl,  options = {}) {
-        // typeof amount !== "number" || typeof amount !== "string" ? throw new Error("Amount must be a number or string")
+    async generate(amount, redirectUrl, note, payorName, payorEmail, currency) {
+        checkAmountType(amount)
+        if (currency !== "USD") {
+            // console.log("Given amount,", amount);
+            const amountInUSD = await convert(amount, currency)
+            amount = amountInUSD
+        } else {
+            amount = amount
+        }
+        // console.log(amount);
+        try {
+            amount = await validateAmount(amount)
+        } catch(err){
+            console.error(err);
+            return err
+        }
 
         const url = `${this.baseUrl}/generate_paylink/`
         const headers = {
             'Authorization': `Token ${this.accessToken}`,
             'Content-Type': 'application/json'
         }
-        const data = {
+        const meta_data = JSON.stringify({
             amount, 
             return_url: redirectUrl,
-            note: 'Payment',
-            payor_name: 'John Doe',
-            payor_email: 'jdavidbruno10@gmail.com'
-        }
+            note,
+            payor_name: payorName,
+            payor_email: payorEmail,
+            // payment_method: paymentMethod,
+        })
 
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    amount,
+                    note,
+                    return_url: redirectUrl,
+                    payor_name: payorName,
+                    payor_email: payorEmail,
+                    // transaction: {
+                    //     payment_method: paymentMethod,
+                    // },
+                    meta_data
+                })
             })
             if (!response.ok) {
                 console.error(response.status, response.statusText);
@@ -121,10 +151,14 @@ class dfmfy {
             throw error
         }
     }
+    async getStatus(linkId) {
+        const linkStatus = await this.getLink(linkId).then(res => console.log(res.transaction.status))
+        return linkStatus
+    }
 }
 
 // Get your token from https://devfundme.com/fr/pms/service
-const token = ''
+const token = 'f20de56487c6c57b0b920429701fcea8fe40dded'
 // const data = {
 //     amount: '190',
 //     note: 'Paiement ',
@@ -134,9 +168,20 @@ const token = ''
 const fakeToken = '' //for testing authentification
 const sdk = new dfmfy(token)
 
-sdk.generate('155', 'https://google.com')
+const amount = '2000'
+const redirectUrl = 'https://youpi.com'
+const note = 'Paiement ciné'
+const payorName = 'John Doe'
+const payorEmail = 'hello@gmail.com'
+// const currency = 'USD'
+const currency = 'HTG'
+
+// TEST
+
+sdk.generate(amount, redirectUrl, note, payorName, payorEmail, currency)
 .then(res => (console.log(res.pay_url)))
 .catch(err => (err))
+// sdk.getStatus(27)
 
 // sdk.getLink(27)
 // sdk.getAll()
