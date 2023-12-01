@@ -1,5 +1,5 @@
 const Currency = require('./currency')  
-const { validateCurrency } = require('../validation')
+// const { validateCurrency } = require('../validation')
 const { InvalidCurrencyError } = require('../error-handling')
 
 async function convert(amount, currencyCode) {
@@ -16,9 +16,9 @@ async function convert(amount, currencyCode) {
         rate = data.rates[currencyCode];
         // console.log("Rate here", rate);
 
-        console.log(`Amount in ${currencyCode} before conversion`, amount);
+        // console.log(`Amount in ${currencyCode} before conversion`, amount);
         amount = (amount / rate).toFixed(2);
-        console.log("Amount in USD", amount);
+        // console.log("Amount in USD", amount);
 
         return amount;
     } catch (error) {

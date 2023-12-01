@@ -1,7 +1,8 @@
-// 'use strict';
-
 const request = require('request');
-const appID = '8c79e54e3b0341de9f9e8f10befc522d';
+const { oxrClient } = require('../index');
+
+// Get your API key from https://openexchangerates.org/signup/free
+const appID = oxrClient;
 
 class Currency {
     constructor(from = 'USD', to = 'HTG') {
