@@ -30,6 +30,7 @@ class dfmfy {
         } 
         try {
             amount = await validateAmount(amount)
+
         } catch(err){
             console.error(err);
             return err
@@ -46,7 +47,6 @@ class dfmfy {
             note,
             payor_name: payorName,
             payor_email: payorEmail,
-            // payment_method: paymentMethod,
         })
 
         try {
@@ -71,9 +71,20 @@ class dfmfy {
                 throw new Error(response.statusText);
             }
             const responseData = await response.json()
-            // ^-^
-            console.log(responseData);
-            return responseData
+            const {
+                id,
+                pay_url, 
+                payor_email,
+                created_at,
+                transaction: {
+                    order_id, 
+                    status
+                }
+            } = responseData
+            const conciseData = {id, pay_url, order_id, status, payor_email, created_at}
+
+            // We return mainData to display the more important data for a better user experience
+            return { mainData: conciseData, all: responseData }
         } catch (error) {
             console.error(error);
             throw error
@@ -104,34 +115,6 @@ class dfmfy {
             console.error(error);
             throw error
         }
-        // return fetch(url, {
-        //     headers,
-        // })
-        // .then(res => {
-        //     if (!res.ok) {
-        //         console.error(res.status)
-        //         //  switch (res.status) {
-        //         //     case 400:
-        //         //         console.error("Invalid request data");
-        //         //         break;
-        //         //     case 401:
-        //         //         console.error("Invalid or expired token");
-        //         //         break;
-        //         //     case 500: 
-        //         //         console.error("Internal server error");
-        //         //         break;
-        //         //     default:
-        //         //         break;
-        //         // }
-        //         throw new Error(res.statusText)
-        //     }
-        //     return res.json()
-        // })
-        // .then(res => res)
-        // .catch(err => {
-        //     console.error(err);
-        //     throw err
-        // })
     }
     async getLink(linkId) {
         const url = `${this.baseUrl}/paylink/${linkId}`
@@ -151,7 +134,6 @@ class dfmfy {
                 throw new Error(response.statusText);
             }
             const responseData = await response.json()
-            // console.log(responseData);
             return responseData
         } catch (error) {
             console.error(error);
@@ -171,13 +153,16 @@ const redirectUrl = 'https://youpi.com'
 const note = 'Paiement ciné'
 const payorName = 'John Doe'
 const payorEmail = 'hello@gmail.com'
-// const currency = 'USD'
-const currency = 'HTG'
+const currency = 'USD'
+// const currency = 'HTG'
 
 // TEST
 
 sdk.generate(amount, {currency, redirectUrl, note, payorName, payorEmail})
-.then(res => (console.log(res.pay_url)))
+.then(res => {
+    const { mainData } = res
+    console.log(mainData);
+})
 .catch(err => (err))
 // sdk.getStatus('160')
 

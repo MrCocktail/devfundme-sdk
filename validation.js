@@ -1,5 +1,4 @@
-const { AmountOutpassedError, InvalidCurrencyError } = require("./error-handling")
-const rates = require("./utils/convert")
+const { AmountOutpassedError } = require("./error-handling")
 
 async function validateAmount(amount){
     try {
@@ -18,19 +17,6 @@ async function validateAmount(amount){
     }
 }
 
-// async function validateCurrency(currency) {
-//     try {
-//         if (!currency in rates[0]) {
-//             throw new InvalidCurrencyError("InvalidCurrencyError")
-//         } else console.log('yes');
-//         return rates[0][currency]
-//     } catch (error) {
-//         console.error(error);
-//         throw error
-//     }
-// }
-
 module.exports = {
     validateAmount,
-    // validateCurrency
 }
