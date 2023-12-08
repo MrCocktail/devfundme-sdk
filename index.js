@@ -1,9 +1,5 @@
-require('dotenv').config();
+const { token } = require("./config")
+const FundMeFy = require("./devfundme-sdk")
 
-const token = process.env.ACCESS_TOKEN
-const oxrClient = process.env.OXR_APP_ID
-
-module.exports = {
-    token,
-    oxrClient
-}
+// Get your token from https://devfundme.com/fr/pms/service
+const sdk = new FundMeFy(token)

@@ -1,36 +1,30 @@
-const {AmountOutpassedError} = require('./error-handling')
-const checkAmountType = require('./utils/checkAmountType')
-const { validateAmount } = require('./validation')
+const { validateAmount, validateParameter, checkAmountType } = require('./utils/validation')
 const { convert} = require('./utils/convert')
-const { token } = require('./index')
 
-class dfmfy {
+class FundMeFy {
     constructor(accessToken) {
         this.accessToken = accessToken
         this.baseUrl = 'https://devfundme.com/api/pms'
     }
 
-    // async generate(amount, redirectUrl, note, payorName, payorEmail, currency = "USD") {
-        // this 👆
-        // OR 
-        // this 👇
-    async generate(amount, options = {}) {
-        const {
+    async generate(options) {
+        validateParameter(options)
+        let {
+            amount = "",
             currency = "USD", // by default
-            redirectUrl = "",
+            returnUrl = "",
             note = "",
             payorName = "",
             payorEmail = "",
         } = options
+
         checkAmountType(amount)
         if (currency !== "USD") {
-            // Go to currency.js to include your APP ID from openexchangerates.org
             const amountInUSD = await convert(amount, currency)
             amount = amountInUSD
         } 
         try {
             amount = await validateAmount(amount)
-
         } catch(err){
             console.error(err);
             return err
@@ -43,7 +37,7 @@ class dfmfy {
         }
         const meta_data = JSON.stringify({
             amount, 
-            return_url: redirectUrl,
+            return_url: returnUrl,
             note,
             payor_name: payorName,
             payor_email: payorEmail,
@@ -56,7 +50,7 @@ class dfmfy {
                 body: JSON.stringify({
                     amount,
                     note,
-                    return_url: redirectUrl,
+                    return_url: returnUrl,
                     payor_name: payorName,
                     payor_email: payorEmail,
                     meta_data
@@ -90,7 +84,6 @@ class dfmfy {
             throw error
         }
     }
-
     async getAll() {
         const url = `${this.baseUrl}/paylink`
         const headers = {
@@ -109,7 +102,6 @@ class dfmfy {
                 throw new Error(response.statusText);
             }
             const responseData = await response.json()
-            console.log(responseData);
             return responseData
         } catch (error) {
             console.error(error);
@@ -141,32 +133,14 @@ class dfmfy {
         }
     }
     async getStatus(linkId) {
-        const linkStatus = await this.getLink(linkId).then(res => console.log(res.transaction.status))
+        try {
+            const linkStatus = await this.getLink(linkId).then(res => (res.transaction.status))
+            return linkStatus
+        } catch (error) {
+            console.error(error);
+            throw error
+        }
     }
 }
 
-// Get your token from https://devfundme.com/fr/pms/service
-const sdk = new dfmfy(token)
-
-const amount = '1500'
-const redirectUrl = 'https://youpi.com'
-const note = 'Paiement ciné'
-const payorName = 'John Doe'
-const payorEmail = 'hello@gmail.com'
-const currency = 'USD'
-// const currency = 'HTG'
-
-// TEST
-
-sdk.generate(amount, {currency, redirectUrl, note, payorName, payorEmail})
-.then(res => {
-    const { mainData } = res
-    console.log(mainData);
-})
-.catch(err => (err))
-// sdk.getStatus('160')
-
-// sdk.getLink(27)
-// sdk.getAll()
-// .then(res => res)
-// .catch(err => err)
+module.exports = FundMeFy

@@ -1,11 +1,12 @@
 {
   "name": "fundmefy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Node.js SDK enabling developers to easily integrate automatic payment functionalities using DevFundMe's API.",
   "main": "devfundme-sdk.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node devfundme-sdk.js"
+    "start": "node index.js",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",

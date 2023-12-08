@@ -1,5 +1,5 @@
 const request = require('request');
-const { oxrClient } = require('../index');
+const { oxrClient } = require('../config');
 
 // Get your API key from https://openexchangerates.org/signup/free
 const appID = oxrClient;
