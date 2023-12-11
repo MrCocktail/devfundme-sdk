@@ -1,5 +1,5 @@
 # fundmefy
-This is a NodeJS SDK based on the Devfundme's API. It allows people to easily integrate payment functionnalities in their apps. 
+This is a NodeJS SDK based on the Devfundme's API. It allows developers to easily integrate payment functionnalities in apps. 
 This SDK support up to 200 currencies and use STRIPE, MONCASH, NATCASH as payment gateway.
 
 # Installation
@@ -62,6 +62,12 @@ Example
 sdk.getStatus(id)
 .then(response => console.log(response))
 .catch(error => console.error(error))
+```
+
+# Test
+If you have cloned the project, you can test in *index.js* and run :
+```bash
+$ npm start
 ```
 
 # Support
